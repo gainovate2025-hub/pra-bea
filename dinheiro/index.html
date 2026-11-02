@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Meu Dinheiro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  :root {
+    --bg:#eef1ee; --surface:#fff; --surface-2:#f7f9f7; --ink:#15201b; --muted:#5e6b64;
+    --line:#e2e7e2; --accent:#0e7c5a; --on-accent:#fff;
+    --ganho:#0e7c5a; --despesa:#c43c30; --extra:#bd7415; --invest:#2d5fa8;
+    --shadow:0 1px 2px rgba(20,32,27,.06),0 8px 24px rgba(20,32,27,.05);
+    --radius:16px; --font:"Hanken Grotesk",system-ui,-apple-system,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+    --bg:#0d1411; --surface:#161f1a; --surface-2:#1c2721; --ink:#e8eeea; --muted:#97a69e;
+    --line:#28352e; --accent:#3ba982; --on-accent:#06130d;
+    --ganho:#3ba982; --despesa:#e2695e; --extra:#e0a54e; --invest:#6f9ce2;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.28); color-scheme:dark;
+  }}
+  :root[data-theme="dark"]{
+    --bg:#0d1411; --surface:#161f1a; --surface-2:#1c2721; --ink:#e8eeea; --muted:#97a69e;
+    --line:#28352e; --accent:#3ba982; --on-accent:#06130d;
+    --ganho:#3ba982; --despesa:#e2695e; --extra:#e0a54e; --invest:#6f9ce2;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.28); color-scheme:dark;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.45;-webkit-font-smoothing:antialiased;
+    padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0);}
+  img{max-width:100%;}
+  [hidden]{display:none!important;}
+  .wrap{max-width:680px;margin:0 auto;
+    padding-left:max(16px,env(safe-area-inset-left,0));padding-right:max(16px,env(safe-area-inset-right,0));
+    padding-block:28px 56px;display:flex;flex-direction:column;gap:20px;}
+
+  header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand .dot{width:30px;height:30px;border-radius:9px;background:var(--accent);color:var(--on-accent);
+    display:grid;place-items:center;font-weight:800;font-size:15px;}
+  .brand h1{font-size:19px;font-weight:800;margin:0;letter-spacing:-.01em;}
+  .top-actions{display:flex;gap:8px;}
+  .icon-btn{border:1px solid var(--line);background:var(--surface);color:var(--muted);
+    width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:16px;display:grid;place-items:center;}
+  .icon-btn:hover{color:var(--ink);}
+
+  .hero{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;}
+  .hero .label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;}
+  .hero .saldo{font-family:var(--mono);font-size:clamp(34px,9vw,46px);font-weight:600;letter-spacing:-.02em;margin-top:4px;font-variant-numeric:tabular-nums;}
+  .hero .sub{font-size:13px;color:var(--muted);margin-top:6px;}
+  .hero .sub b{color:var(--ink);font-variant-numeric:tabular-nums;}
+
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+  .tile{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:12px;display:flex;flex-direction:column;gap:3px;min-width:0;}
+  .tile .t-name{font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:5px;color:var(--muted);}
+  .tile .t-name::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c);flex:none;}
+  .tile .t-val{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;overflow-wrap:anywhere;}
+  .tile.ganho{--c:var(--ganho);} .tile.despesa{--c:var(--despesa);} .tile.extra{--c:var(--extra);} .tile.investimento{--c:var(--invest);}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;}
+  .card h2{font-size:14px;font-weight:800;margin:0 0 14px;letter-spacing:-.01em;}
+  .seg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;}
+  @media (min-width:440px){.seg{grid-template-columns:repeat(4,1fr);}}
+  .seg button{border:1.5px solid var(--line);background:var(--surface-2);color:var(--muted);border-radius:11px;padding:10px 6px;
+    cursor:pointer;font:inherit;font-size:13px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px;
+    transition:border-color .12s,color .12s,background .12s;}
+  .seg button .ico{font-size:17px;}
+  .seg button[aria-pressed="true"]{border-color:var(--c);color:var(--c);background:color-mix(in srgb,var(--c) 10%,var(--surface));}
+  .seg button.ganho{--c:var(--ganho);} .seg button.despesa{--c:var(--despesa);} .seg button.extra{--c:var(--extra);} .seg button.investimento{--c:var(--invest);}
+
+  .fields{display:flex;flex-direction:column;gap:10px;}
+  .row{display:flex;gap:10px;flex-wrap:wrap;}
+  .row>*{flex:1 1 140px;min-width:0;}
+  label.fld{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700;color:var(--muted);}
+  input{font:inherit;color:var(--ink);background:var(--surface-2);border:1.5px solid var(--line);border-radius:10px;padding:11px 12px;width:100%;}
+  input:focus-visible{outline:none;border-color:var(--accent);}
+  input::placeholder{color:color-mix(in srgb,var(--muted) 70%,transparent);}
+  .add-btn{margin-top:2px;border:none;background:var(--accent);color:var(--on-accent);font:inherit;font-weight:800;font-size:15px;border-radius:11px;padding:13px;cursor:pointer;width:100%;}
+  .add-btn:hover{filter:brightness(1.05);} .add-btn:disabled{opacity:.55;cursor:default;}
+  .form-msg{font-size:13px;font-weight:600;color:var(--despesa);min-height:1px;}
+
+  .list-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+  .list-head h2{font-size:14px;font-weight:800;margin:0;}
+  .filters{display:flex;gap:6px;flex-wrap:wrap;}
+  .filters button{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:5px 12px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;}
+  .filters button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink);}
+
+  .items{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+  .item{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;}
+  .item .bar{width:4px;align-self:stretch;border-radius:4px;background:var(--c);flex:none;}
+  .item.ganho{--c:var(--ganho);} .item.despesa{--c:var(--despesa);} .item.extra{--c:var(--extra);} .item.investimento{--c:var(--invest);}
+  .item .info{min-width:0;flex:1;}
+  .item .nm{font-weight:700;font-size:14.5px;overflow-wrap:anywhere;}
+  .item .meta{font-size:12px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;margin-top:1px;}
+  .item .tag{color:var(--c);font-weight:700;}
+  .item .amt{font-family:var(--mono);font-weight:600;font-size:15px;white-space:nowrap;font-variant-numeric:tabular-nums;}
+  .item .amt.neg{color:var(--despesa);} .item .amt.pos{color:var(--ganho);}
+  .item .del{border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:18px;width:30px;height:30px;border-radius:8px;flex:none;}
+  .item .del:hover{background:color-mix(in srgb,var(--despesa) 14%,transparent);color:var(--despesa);}
+
+  .empty,.state{text-align:center;color:var(--muted);padding:34px 18px;background:var(--surface);border:1px dashed var(--line);border-radius:var(--radius);}
+  .empty .big{font-size:30px;} .empty p{margin:8px 0 0;font-size:14px;} .empty .hint{font-size:12.5px;margin-top:4px;opacity:.85;}
+  .note{font-size:12px;color:var(--muted);text-align:center;}
+
+  /* Tela do código */
+  .gate{position:fixed;inset:0;background:var(--bg);display:grid;place-items:center;padding:20px;z-index:50;}
+  .gate .box{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+    padding:26px 22px;max-width:380px;width:100%;display:flex;flex-direction:column;gap:14px;}
+  .gate .dot{width:44px;height:44px;border-radius:12px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-weight:800;font-size:19px;}
+  .gate h2{margin:0;font-size:19px;font-weight:800;}
+  .gate p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.5;}
+  .gate .add-btn{margin-top:4px;}
+  .gate .err{color:var(--despesa);font-size:13px;font-weight:600;min-height:1px;}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+
+<div class="gate" id="gate">
+  <div class="box">
+    <div class="dot">R$</div>
+    <h2>Meu Dinheiro</h2>
+    <p>Crie um <b>código de acesso</b> (como uma senha simples). Digite o <b>mesmo código</b> no celular e no Mac, e seus lançamentos aparecem iguais nos dois. Guarde ele bem — é a chave dos seus dados.</p>
+    <label class="fld" style="font-weight:700;color:var(--muted);font-size:12px;">Seu código de acesso
+      <input id="codigoInput" type="text" placeholder="ex.: brayan-2026-dinheiro" autocomplete="off" spellcheck="false" />
+    </label>
+    <button class="add-btn" id="entrarBtn" type="button">Entrar</button>
+    <div class="err" id="gateErr"></div>
+  </div>
+</div>
+
+<div class="wrap" id="app" hidden>
+  <header class="top">
+    <div class="brand"><div class="dot">R$</div><h1>Meu Dinheiro</h1></div>
+    <div class="top-actions">
+      <button class="icon-btn" id="themeBtn" title="Mudar tema" aria-label="Mudar tema">◐</button>
+      <button class="icon-btn" id="sairBtn" title="Trocar código" aria-label="Trocar código">⎋</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="label">Saldo atual</div>
+    <div class="saldo" id="saldo">R$ 0,00</div>
+    <div class="sub">Entradas <b id="subEntradas">R$ 0,00</b> &nbsp;·&nbsp; Saídas <b id="subSaidas">R$ 0,00</b></div>
+  </section>
+
+  <section class="tiles">
+    <div class="tile ganho"><div class="t-name">Ganhos</div><div class="t-val" id="totGanho">R$ 0,00</div></div>
+    <div class="tile despesa"><div class="t-name">Despesas</div><div class="t-val" id="totDespesa">R$ 0,00</div></div>
+    <div class="tile extra"><div class="t-name">Extras</div><div class="t-val" id="totExtra">R$ 0,00</div></div>
+    <div class="tile investimento"><div class="t-name">Investido</div><div class="t-val" id="totInvest">R$ 0,00</div></div>
+  </section>
+
+  <section class="card">
+    <h2>Novo lançamento</h2>
+    <div class="seg" id="seg">
+      <button type="button" class="ganho" data-tipo="ganho" aria-pressed="true"><span class="ico">💰</span>Ganho</button>
+      <button type="button" class="despesa" data-tipo="despesa" aria-pressed="false"><span class="ico">🧾</span>Despesa</button>
+      <button type="button" class="extra" data-tipo="extra" aria-pressed="false"><span class="ico">✨</span>Extra</button>
+      <button type="button" class="investimento" data-tipo="investimento" aria-pressed="false"><span class="ico">📈</span>Investimento</button>
+    </div>
+    <form class="fields" id="form" autocomplete="off">
+      <div class="row">
+        <label class="fld">Nome<input id="nome" type="text" placeholder="Ex.: Salário, Mercado, Freela..." maxlength="60" /></label>
+        <label class="fld">Valor (R$)<input id="valor" type="text" inputmode="decimal" placeholder="0,00" /></label>
+      </div>
+      <label class="fld">Data<input id="data" type="date" /></label>
+      <button class="add-btn" id="addBtn" type="submit">Adicionar lançamento</button>
+      <div class="form-msg" id="formMsg" role="alert"></div>
+    </form>
+  </section>
+
+  <section>
+    <div class="list-head">
+      <h2>Extrato</h2>
+      <div class="filters" id="filters">
+        <button data-f="todos" aria-pressed="true">Todos</button>
+        <button data-f="ganho" aria-pressed="false">Ganhos</button>
+        <button data-f="despesa" aria-pressed="false">Despesas</button>
+        <button data-f="extra" aria-pressed="false">Extras</button>
+        <button data-f="investimento" aria-pressed="false">Investimentos</button>
+      </div>
+    </div>
+    <div class="items" id="items"></div>
+  </section>
+
+  <p class="note" id="syncNote">Salvo na nuvem — abre igual no MacBook e no celular com o mesmo código.</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  var SUPA_URL="https://cdbvevtsaorburbmogpk.supabase.co";
+  var SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkYnZldnRzYW9yYnVyYm1vZ3BrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY3MzkwODcsImV4cCI6MjEwMjMxNTA4N30.JQS_71VpIHELYUBK27eY8X7asAA3LvzlXbbps8Iaeho";
+  var sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  var TIPOS={ganho:{label:"Ganho",sign:+1},despesa:{label:"Despesa",sign:-1},extra:{label:"Extra",sign:+1},investimento:{label:"Investimento",sign:0}};
+  var fmt=new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
+  function money(n){return fmt.format(n||0);}
+  function $(id){return document.getElementById(id);}
+  function parseValor(s){if(!s)return NaN;s=String(s).trim().replace(/\s|R\$/g,"");if(s.indexOf(",")>-1)s=s.replace(/\./g,"").replace(",",".");var n=parseFloat(s);return isNaN(n)?NaN:n;}
+  function hojeISO(){var d=new Date(),o=d.getTimezoneOffset();return new Date(d.getTime()-o*60000).toISOString().slice(0,10);}
+  function dataBR(iso){if(!iso)return"";var p=String(iso).slice(0,10).split("-");return p.length===3?p[2]+"/"+p[1]+"/"+p[0]:iso;}
+
+  // tema
+  var root=document.documentElement;
+  try{var sv=localStorage.getItem("md-tema");if(sv)root.setAttribute("data-theme",sv);}catch(e){}
+  $("themeBtn").addEventListener("click",function(){
+    var dark=root.getAttribute("data-theme")==="dark"||(!root.getAttribute("data-theme")&&matchMedia("(prefers-color-scheme:dark)").matches);
+    var nx=dark?"light":"dark";root.setAttribute("data-theme",nx);try{localStorage.setItem("md-tema",nx);}catch(e){}
+  });
+
+  var codigo=null, lancamentos=[], tipoSel="ganho", filtro="todos", carregando=false;
+
+  // ---- tela do código ----
+  function tentarEntrar(){
+    var c=$("codigoInput").value.trim();
+    if(c.length<4){$("gateErr").textContent="O código precisa ter pelo menos 4 letras/números.";return;}
+    codigo=c;
+    try{localStorage.setItem("md-codigo",c);}catch(e){}
+    $("gate").hidden=true;$("app").hidden=false;
+    iniciarApp();
+  }
+  $("entrarBtn").addEventListener("click",tentarEntrar);
+  $("codigoInput").addEventListener("keydown",function(e){if(e.key==="Enter")tentarEntrar();});
+  $("sairBtn").addEventListener("click",function(){
+    try{localStorage.removeItem("md-codigo");}catch(e){}
+    codigo=null;lancamentos=[];$("app").hidden=true;$("gate").hidden=false;$("codigoInput").value="";$("codigoInput").focus();
+  });
+
+  // ---- app ----
+  function iniciarApp(){
+    $("data").value=hojeISO();
+    carregar();
+  }
+
+  var seg=$("seg");
+  seg.addEventListener("click",function(ev){var b=ev.target.closest("button[data-tipo]");if(!b)return;tipoSel=b.getAttribute("data-tipo");
+    Array.prototype.forEach.call(seg.children,function(c){c.setAttribute("aria-pressed",c===b?"true":"false");});});
+  var filtros=$("filters");
+  filtros.addEventListener("click",function(ev){var b=ev.target.closest("button[data-f]");if(!b)return;filtro=b.getAttribute("data-f");
+    Array.prototype.forEach.call(filtros.children,function(c){c.setAttribute("aria-pressed",c===b?"true":"false");});render();});
+
+  function totais(){var t={ganho:0,despesa:0,extra:0,investimento:0};lancamentos.forEach(function(l){if(t[l.tipo]!=null)t[l.tipo]+=(Number(l.valor)||0);});return t;}
+
+  function render(){
+    var t=totais();
+    $("totGanho").textContent=money(t.ganho);$("totDespesa").textContent=money(t.despesa);
+    $("totExtra").textContent=money(t.extra);$("totInvest").textContent=money(t.investimento);
+    var entradas=t.ganho+t.extra,saidas=t.despesa;
+    $("saldo").textContent=money(entradas-saidas);$("subEntradas").textContent=money(entradas);$("subSaidas").textContent=money(saidas);
+
+    var box=$("items");
+    if(carregando){box.innerHTML='<div class="state">Carregando seus lançamentos…</div>';return;}
+    if(!lancamentos.length){box.innerHTML='<div class="empty"><div class="big">🪙</div><p>Ainda não há lançamentos.</p><p class="hint">Escolha um tipo acima, dê um nome e o valor, e toque em “Adicionar”.</p></div>';return;}
+    var vis=lancamentos.filter(function(l){return filtro==="todos"||l.tipo===filtro;});
+    if(!vis.length){box.innerHTML='<div class="empty"><p>Nenhum lançamento desse tipo ainda.</p></div>';return;}
+    box.innerHTML="";
+    vis.forEach(function(l){
+      var info=TIPOS[l.tipo]||{label:l.tipo,sign:0};
+      var el=document.createElement("div");el.className="item "+l.tipo;
+      var amtCls=info.sign>0?"pos":(info.sign<0?"neg":"");
+      var prefix=info.sign>0?"+ ":(info.sign<0?"− ":"");
+      el.innerHTML='<div class="bar"></div><div class="info"><div class="nm"></div><div class="meta"><span class="tag"></span><span class="dt"></span></div></div><div class="amt '+amtCls+'"></div><button class="del" title="Apagar" aria-label="Apagar">×</button>';
+      el.querySelector(".nm").textContent=l.nome||info.label;
+      el.querySelector(".tag").textContent=info.label;
+      el.querySelector(".dt").textContent=dataBR(l.data);
+      el.querySelector(".amt").textContent=prefix+money(l.valor);
+      el.querySelector(".del").addEventListener("click",function(){apagar(l);});
+      box.appendChild(el);
+    });
+  }
+
+  function mostrarMsg(txt){$("formMsg").textContent=txt||"";if(txt)setTimeout(function(){if($("formMsg").textContent===txt)$("formMsg").textContent="";},4000);}
+
+  async function carregar(){
+    carregando=true;render();
+    try{
+      var res=await sb.rpc("financas_listar",{p_codigo:codigo});
+      if(res.error)throw res.error;
+      lancamentos=(res.data||[]).map(function(r){return{id:r.id,tipo:r.tipo,nome:r.nome,valor:r.valor,data:r.data};});
+      $("syncNote").textContent="Salvo na nuvem — abre igual no MacBook e no celular com o mesmo código.";
+    }catch(e){
+      $("syncNote").textContent="Não consegui ler a nuvem agora. Verifique sua internet.";
+    }
+    carregando=false;render();
+  }
+
+  $("form").addEventListener("submit",async function(ev){
+    ev.preventDefault();mostrarMsg("");
+    var nome=$("nome").value.trim(),valor=parseValor($("valor").value),data=$("data").value||hojeISO();
+    if(!nome){mostrarMsg("Dê um nome para o lançamento.");$("nome").focus();return;}
+    if(isNaN(valor)||valor<=0){mostrarMsg("Digite um valor maior que zero.");$("valor").focus();return;}
+    $("addBtn").disabled=true;
+    try{
+      var res=await sb.rpc("financas_add",{p_codigo:codigo,p_tipo:tipoSel,p_nome:nome,p_valor:Math.round(valor*100)/100,p_data:data});
+      if(res.error)throw res.error;
+      var r=res.data;
+      lancamentos.unshift({id:r.id,tipo:r.tipo,nome:r.nome,valor:r.valor,data:r.data});
+      $("nome").value="";$("valor").value="";$("data").value=hojeISO();$("nome").focus();render();
+    }catch(e){mostrarMsg("Não consegui salvar agora. Tente de novo.");}
+    $("addBtn").disabled=false;
+  });
+
+  async function apagar(l){
+    try{
+      var res=await sb.rpc("financas_apagar",{p_codigo:codigo,p_id:l.id});
+      if(res.error)throw res.error;
+      lancamentos=lancamentos.filter(function(x){return x.id!==l.id;});render();
+    }catch(e){mostrarMsg("Não consegui apagar agora. Tente de novo.");}
+  }
+
+  // auto-login se já tem código salvo
+  try{var saved=localStorage.getItem("md-codigo");if(saved){$("codigoInput").value=saved;codigo=saved;$("gate").hidden=true;$("app").hidden=false;iniciarApp();}else{$("codigoInput").focus();}}catch(e){}
+})();
+</script>
+</body>
+</html>
