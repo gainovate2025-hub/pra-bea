@@ -11,7 +11,7 @@
   :root {
     --bg:#eef1ee; --surface:#fff; --surface-2:#f7f9f7; --ink:#15201b; --muted:#5e6b64;
     --line:#e2e7e2; --accent:#0e7c5a; --on-accent:#fff;
-    --ganho:#0e7c5a; --despesa:#c43c30; --extra:#bd7415; --invest:#2d5fa8;
+    --ganho:#0e7c5a; --despesa:#c43c30; --extra:#bd7415; --invest:#2d5fa8; --reserva:#6d54c9;
     --shadow:0 1px 2px rgba(20,32,27,.06),0 8px 24px rgba(20,32,27,.05);
     --radius:16px; --font:"Hanken Grotesk",system-ui,-apple-system,sans-serif;
     --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
@@ -19,13 +19,13 @@
   @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
     --bg:#0d1411; --surface:#161f1a; --surface-2:#1c2721; --ink:#e8eeea; --muted:#97a69e;
     --line:#28352e; --accent:#3ba982; --on-accent:#06130d;
-    --ganho:#3ba982; --despesa:#e2695e; --extra:#e0a54e; --invest:#6f9ce2;
+    --ganho:#3ba982; --despesa:#e2695e; --extra:#e0a54e; --invest:#6f9ce2; --reserva:#a890e6;
     --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.28); color-scheme:dark;
   }}
   :root[data-theme="dark"]{
     --bg:#0d1411; --surface:#161f1a; --surface-2:#1c2721; --ink:#e8eeea; --muted:#97a69e;
     --line:#28352e; --accent:#3ba982; --on-accent:#06130d;
-    --ganho:#3ba982; --despesa:#e2695e; --extra:#e0a54e; --invest:#6f9ce2;
+    --ganho:#3ba982; --despesa:#e2695e; --extra:#e0a54e; --invest:#6f9ce2; --reserva:#a890e6;
     --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.28); color-scheme:dark;
   }
   *{box-sizing:border-box;}
@@ -54,23 +54,24 @@
   .hero .sub{font-size:13px;color:var(--muted);margin-top:6px;}
   .hero .sub b{color:var(--ink);font-variant-numeric:tabular-nums;}
 
-  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:10px;}
   .tile{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:12px;display:flex;flex-direction:column;gap:3px;min-width:0;}
   .tile .t-name{font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:5px;color:var(--muted);}
   .tile .t-name::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c);flex:none;}
   .tile .t-val{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;overflow-wrap:anywhere;}
-  .tile.ganho{--c:var(--ganho);} .tile.despesa{--c:var(--despesa);} .tile.extra{--c:var(--extra);} .tile.investimento{--c:var(--invest);}
+  .tile.ganho{--c:var(--ganho);} .tile.despesa{--c:var(--despesa);} .tile.extra{--c:var(--extra);} .tile.investimento{--c:var(--invest);} .tile.reserva{--c:var(--reserva);}
 
   .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;}
   .card h2{font-size:14px;font-weight:800;margin:0 0 14px;letter-spacing:-.01em;}
   .seg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;}
-  @media (min-width:440px){.seg{grid-template-columns:repeat(4,1fr);}}
+  @media (min-width:440px){.seg{grid-template-columns:repeat(3,1fr);}}
+  @media (min-width:600px){.seg{grid-template-columns:repeat(5,1fr);}}
   .seg button{border:1.5px solid var(--line);background:var(--surface-2);color:var(--muted);border-radius:11px;padding:10px 6px;
     cursor:pointer;font:inherit;font-size:13px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px;
     transition:border-color .12s,color .12s,background .12s;}
   .seg button .ico{font-size:17px;}
   .seg button[aria-pressed="true"]{border-color:var(--c);color:var(--c);background:color-mix(in srgb,var(--c) 10%,var(--surface));}
-  .seg button.ganho{--c:var(--ganho);} .seg button.despesa{--c:var(--despesa);} .seg button.extra{--c:var(--extra);} .seg button.investimento{--c:var(--invest);}
+  .seg button.ganho{--c:var(--ganho);} .seg button.despesa{--c:var(--despesa);} .seg button.extra{--c:var(--extra);} .seg button.investimento{--c:var(--invest);} .seg button.reserva{--c:var(--reserva);}
 
   .fields{display:flex;flex-direction:column;gap:10px;}
   .row{display:flex;gap:10px;flex-wrap:wrap;}
@@ -92,7 +93,7 @@
   .items{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
   .item{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;}
   .item .bar{width:4px;align-self:stretch;border-radius:4px;background:var(--c);flex:none;}
-  .item.ganho{--c:var(--ganho);} .item.despesa{--c:var(--despesa);} .item.extra{--c:var(--extra);} .item.investimento{--c:var(--invest);}
+  .item.ganho{--c:var(--ganho);} .item.despesa{--c:var(--despesa);} .item.extra{--c:var(--extra);} .item.investimento{--c:var(--invest);} .item.reserva{--c:var(--reserva);}
   .item .info{min-width:0;flex:1;}
   .item .nm{font-weight:700;font-size:14.5px;overflow-wrap:anywhere;}
   .item .meta{font-size:12px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;margin-top:1px;}
@@ -153,6 +154,7 @@
     <div class="tile despesa"><div class="t-name">Despesas</div><div class="t-val" id="totDespesa">R$ 0,00</div></div>
     <div class="tile extra"><div class="t-name">Extras</div><div class="t-val" id="totExtra">R$ 0,00</div></div>
     <div class="tile investimento"><div class="t-name">Investido</div><div class="t-val" id="totInvest">R$ 0,00</div></div>
+    <div class="tile reserva"><div class="t-name">Reserva</div><div class="t-val" id="totReserva">R$ 0,00</div></div>
   </section>
 
   <section class="card">
@@ -162,6 +164,7 @@
       <button type="button" class="despesa" data-tipo="despesa" aria-pressed="false"><span class="ico">🧾</span>Despesa</button>
       <button type="button" class="extra" data-tipo="extra" aria-pressed="false"><span class="ico">✨</span>Extra</button>
       <button type="button" class="investimento" data-tipo="investimento" aria-pressed="false"><span class="ico">📈</span>Investimento</button>
+      <button type="button" class="reserva" data-tipo="reserva" aria-pressed="false"><span class="ico">🏦</span>Reserva</button>
     </div>
     <form class="fields" id="form" autocomplete="off">
       <div class="row">
@@ -183,6 +186,7 @@
         <button data-f="despesa" aria-pressed="false">Despesas</button>
         <button data-f="extra" aria-pressed="false">Extras</button>
         <button data-f="investimento" aria-pressed="false">Investimentos</button>
+        <button data-f="reserva" aria-pressed="false">Reserva</button>
       </div>
     </div>
     <div class="items" id="items"></div>
@@ -199,7 +203,7 @@
   var SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkYnZldnRzYW9yYnVyYm1vZ3BrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY3MzkwODcsImV4cCI6MjEwMjMxNTA4N30.JQS_71VpIHELYUBK27eY8X7asAA3LvzlXbbps8Iaeho";
   var sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
 
-  var TIPOS={ganho:{label:"Ganho",sign:+1},despesa:{label:"Despesa",sign:-1},extra:{label:"Extra",sign:+1},investimento:{label:"Investimento",sign:0}};
+  var TIPOS={ganho:{label:"Ganho",sign:+1},despesa:{label:"Despesa",sign:-1},extra:{label:"Extra",sign:+1},investimento:{label:"Investimento",sign:0},reserva:{label:"Reserva",sign:0}};
   var fmt=new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
   function money(n){return fmt.format(n||0);}
   function $(id){return document.getElementById(id);}
@@ -246,12 +250,12 @@
   filtros.addEventListener("click",function(ev){var b=ev.target.closest("button[data-f]");if(!b)return;filtro=b.getAttribute("data-f");
     Array.prototype.forEach.call(filtros.children,function(c){c.setAttribute("aria-pressed",c===b?"true":"false");});render();});
 
-  function totais(){var t={ganho:0,despesa:0,extra:0,investimento:0};lancamentos.forEach(function(l){if(t[l.tipo]!=null)t[l.tipo]+=(Number(l.valor)||0);});return t;}
+  function totais(){var t={ganho:0,despesa:0,extra:0,investimento:0,reserva:0};lancamentos.forEach(function(l){if(t[l.tipo]!=null)t[l.tipo]+=(Number(l.valor)||0);});return t;}
 
   function render(){
     var t=totais();
     $("totGanho").textContent=money(t.ganho);$("totDespesa").textContent=money(t.despesa);
-    $("totExtra").textContent=money(t.extra);$("totInvest").textContent=money(t.investimento);
+    $("totExtra").textContent=money(t.extra);$("totInvest").textContent=money(t.investimento);$("totReserva").textContent=money(t.reserva);
     var entradas=t.ganho+t.extra,saidas=t.despesa;
     $("saldo").textContent=money(entradas-saidas);$("subEntradas").textContent=money(entradas);$("subSaidas").textContent=money(saidas);
 
